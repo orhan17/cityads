@@ -21,21 +21,33 @@
    cd cityads
    ```
 
-2. **Сконфигурируйте переменные окружения** в `.env`, указав данные для MySQL и прочие настройки (например, `MYSQL_ROOT_PASSWORD`, `MYSQL_DATABASE`, `MYSQL_USER`, `MYSQL_PASSWORD` и т. д.).
+2. Скопируйте `.env.example` в `.env` (внутри папки `src/`):
+   ```bash
+   cp src/.env.example src/.env
+   cp .env.example .env
+   ```
+   
+3. **Сконфигурируйте переменные окружения** в `.env`, указав данные для MySQL и прочие настройки (например, `MYSQL_ROOT_PASSWORD`, `MYSQL_DATABASE`, `MYSQL_USER`, `MYSQL_PASSWORD` и т. д.).
 
-3. **Соберите и запустите** контейнеры:
+4. **Соберите и запустите** контейнеры:
 
    ```bash
    docker compose down && docker compose up --build
    ```
 
-4. **Убедитесь**, что контейнеры поднялись:
+5. **Убедитесь**, что контейнеры поднялись:
 
    ```bash
    docker compose ps
    ```
+   
+6. **Установите зависимости**
+    ```bash
+    docker compose exec app bash
+    composer install
+    ```
 
-5. **Зайдите в браузере** по адресу `http://localhost:8000` (если `NGINX_PORT` = 8000). Должна открыться страница вашего Symfony‑приложения (или 404, если нет дефолтного роутинга).
+7. **Зайдите в браузере** по адресу `http://localhost:8000` (если `NGINX_PORT` = 8000). Должна открыться страница вашего Symfony‑приложения (или 404, если нет дефолтного роутинга).
 
 ## Миграции БД
 
