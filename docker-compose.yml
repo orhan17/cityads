@@ -1,0 +1,58 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: city-docker-symfony
+    volumes:
+      - ./src:/var/www/html
+    networks:
+      - city-symfony-network
+
+
+  db:
+    image: mysql:8.0
+    container_name: city-docker-symfony-db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - city-symfony-network
+
+  redis:
+    image: redis:6.0
+    container_name: city-docker-symfony-redis
+    networks:
+      - city-symfony-network
+
+  nginx:
+    image: nginx:latest
+    container_name: city-docker-symfony-nginx
+    ports:
+      - "${NGINX_PORT}:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./src:/var/www/html
+    networks:
+      - city-symfony-network
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: city-docker-symfony-phpmyadmin
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "${PMA_PORT}:80"
+    networks:
+      - city-symfony-network
+
+networks:
+  city-symfony-network:
+
+volumes:
+  dbdata:

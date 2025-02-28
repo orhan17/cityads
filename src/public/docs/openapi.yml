@@ -1,0 +1,120 @@
+openapi: 3.0.0
+info:
+  title: CityAds Offers API
+  version: 1.0.0
+  description: >
+    Simple API to synchronize offers from CityAds and retrieve them by GEO.
+
+paths:
+  /offers/{geo}:
+    get:
+      summary: Returns list of offers by GEO code
+      description: >
+        Fetch offers from DB, filtered by the given GEO code.
+      parameters:
+        - name: geo
+          in: path
+          required: true
+          description: GEO code
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Current page (pagination)
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          description: Items per page (max 20)
+          schema:
+            type: integer
+            default: 5
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        currencyName:
+                          type: string
+                        rating:
+                          type: number
+                        siteUrl:
+                          type: string
+                        logo:
+                          type: string
+                  total:
+                    type: integer
+                  page:
+                    type: integer
+                  limit:
+                    type: integer
+        '404':
+          description: GEO not found or no offers
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /geo-stats:
+    get:
+      summary: Get GEO stats
+      description: >
+        Returns array of all GEO codes and how many offers each GEO has.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    code:
+                      type: string
+                    name:
+                      type: string
+                    offersCount:
+                      type: integer
+
+  /sync-offers:
+    post:
+      summary: Start synchronization with CityAds
+      description: >
+        Launches the CityAdsSyncService to import offers. 
+        If sync is already in progress, returns an error.
+      responses:
+        '200':
+          description: Sync completed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '409':
+          description: Sync already in progress
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
